@@ -1,18 +1,13 @@
 package com.sk.fastblurimageview;
 
-import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -20,6 +15,8 @@ import android.widget.ImageView;
  * Created by owner on 12-Apr-15.
  */
 public class BlurImageView extends ImageView {
+    private int radius;
+
     public BlurImageView(Context context) {
         super(context);
 
@@ -30,6 +27,12 @@ public class BlurImageView extends ImageView {
     public BlurImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.blur, 0, 0);
+        try {
+            radius = ta.getInt(R.styleable.blur_blur_radius, 1);
+        } finally {
+            ta.recycle();
+        }
         setScaleType(ScaleType.MATRIX);
 
     }
@@ -37,6 +40,12 @@ public class BlurImageView extends ImageView {
     public BlurImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.blur, 0, 0);
+        try {
+            radius = ta.getInt(R.styleable.blur_blur_radius, 1);
+        } finally {
+            ta.recycle();
+        }
         setScaleType(ScaleType.MATRIX);
 
     }
@@ -44,7 +53,7 @@ public class BlurImageView extends ImageView {
     @Override
     protected boolean setFrame(int l, int t, int r, int b) {
         Matrix matrix = getImageMatrix();
-        float scaleFactor = getWidth()/(float)getDrawable().getIntrinsicWidth();
+        float scaleFactor = getWidth() / (float) getDrawable().getIntrinsicWidth();
         matrix.setScale(scaleFactor, scaleFactor, 0, 0);
         setImageMatrix(matrix);
         return super.setFrame(l, t, r, b);
@@ -68,9 +77,8 @@ public class BlurImageView extends ImageView {
         int w = getWidth(), h = getHeight();
 
         BlurImage blurImage = new BlurImage();
-//        Bitmap roundBitmap = CreateBlurredImage(bitmap);
-        Bitmap roundBitmap = blurImage.fastblur(getContext(), bitmap, 25);
-//        setScaleType(ScaleType.FIT_XY);
+
+        Bitmap roundBitmap = BlurImage.fastblur(getContext(), bitmap, radius);
         canvas.drawBitmap(roundBitmap, 0, 0, new Paint());
 
     }

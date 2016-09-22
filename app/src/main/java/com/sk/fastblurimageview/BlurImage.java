@@ -1,11 +1,8 @@
 package com.sk.fastblurimageview;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -18,16 +15,21 @@ import android.util.Log;
  */
 public class BlurImage {
 
+    private static final String TAG = "Blur";
     Context context;
 
     public BlurImage() {
 
     }
 
-    private static final String TAG = "Blur";
-
     @SuppressLint("NewApi")
     public static Bitmap fastblur(Context context, Bitmap sentBitmap, int radius) {
+
+
+        if (radius == 0)
+            radius = 1;
+        else if (radius > 25)
+            radius = 25;
 
         if (Build.VERSION.SDK_INT > 16) {
             Bitmap bitmap = sentBitmap.copy(sentBitmap.getConfig(), true);
