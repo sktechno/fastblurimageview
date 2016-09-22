@@ -83,4 +83,10 @@ public class BlurImageView extends ImageView {
 
     }
 
+    public void setRadius(int radius) {
+
+        this.radius = radius;
+        invalidate();
+    }
+
 }
